@@ -5,8 +5,8 @@
 
 using namespace std;
 
-int const RED = 1;
-int const BLACK = 2;
+int const RED = 0;
+int const BLACK = 1;
 
 class RedBlackTree {
 public:
@@ -26,9 +26,7 @@ public:
             color = BLACK;
         }
         
-    } *root, *x, *y, *z;
-    
-    Node *NIL;
+    } *root, *x, *y, *z, *NIL;
     
     RedBlackTree (){
         NIL = new Node();
@@ -88,7 +86,7 @@ public:
         return x;
     }
     
-    void left_rotate(Node *x){
+    void leftRotate(Node *x){
         //make y
         y = x->right;
         
@@ -109,8 +107,8 @@ public:
         x->parent = y;
     }
     
-    // copy from left_rotate but change x to y, left to right and vice versa
-    void right_rotate(Node *y){
+    // copy from leftRotate but change x to y, left to right and vice versa
+    void rightRotate(Node *y){
         x = y->left;
         
         y->left = x->right;
@@ -144,7 +142,7 @@ public:
         
         z->parent = y;
         
-        insert_fixup(z);
+        insertFixup(z);
 
         cout << "*     Insert     *";
         printWord(key);
@@ -152,7 +150,7 @@ public:
         cout << "*************************************************************\n";
     }
     
-    void insert_fixup(Node *x){
+    void insertFixup(Node *x){
         while (x->parent->color == RED){
             if (x->parent->parent->left == x->parent){
                 y = x->parent->parent->right;
@@ -164,11 +162,11 @@ public:
                 }else{
                     if (x->parent->right == x){
                         x = x->parent;
-                        left_rotate(x);
+                        leftRotate(x);
                     }
                     x->parent->color = BLACK;
                     x->parent->parent->color = RED;
-                    right_rotate(x->parent->parent);
+                    rightRotate(x->parent->parent);
                 }
             }
             else{
@@ -181,11 +179,11 @@ public:
                 }else{
                     if (x->parent->left == x){
                         x = x->parent;
-                        right_rotate(x);
+                        rightRotate(x);
                     }
                     x->parent->color = BLACK;
                     x->parent->parent->color = RED;
-                    left_rotate(x->parent->parent);
+                    leftRotate(x->parent->parent);
                 }
             }
         }
@@ -238,20 +236,20 @@ public:
                 y->left->parent = y;
                 y->color = z->color;
             }
-            if (y_original_color == BLACK) delete_fixup(x);
+            if (y_original_color == BLACK) deleteFixup(x);
             cout << "*    Success    *\n";
         }
         cout << "*************************************************************\n";
     }
 
-    void delete_fixup(Node *x){
+    void deleteFixup(Node *x){
         while (x != root && x->color == BLACK){
             if (x == x->parent->left){
                 y = x->parent->right;
                 if (y->color == RED){
                     y->color = BLACK;
                     x->parent->color = RED;
-                    left_rotate(x->parent);
+                    leftRotate(x->parent);
                     y = x->parent->right;
                 }
                 if (y->left->color == BLACK && y->right->color == BLACK){
@@ -262,13 +260,13 @@ public:
                     if (y->right->color == BLACK){
                         y->left->color = BLACK;
                         y->color = RED;
-                        right_rotate(y);
+                        rightRotate(y);
                         y = x->parent->right;
                     }
                     y->color = x->parent->color;
                     x->parent->color = BLACK;
                     y->right->color = BLACK;
-                    left_rotate(x->parent);
+                    leftRotate(x->parent);
                     x = root;
                 }
             }
@@ -277,7 +275,7 @@ public:
                 if (y->color == RED){
                     y->color = BLACK;
                     x->parent->color = RED;
-                    right_rotate(x->parent);
+                    rightRotate(x->parent);
                     y = x->parent->left;
                 }
                 if (y->right->color == BLACK && y->left->color == BLACK){
@@ -288,13 +286,13 @@ public:
                     if (y->left->color == BLACK){
                         y->right->color = BLACK;
                         y->color = RED;
-                        left_rotate(y);
+                        leftRotate(y);
                         y = x->parent->left;
                     }
                     y->color = x->parent->color;
                     x->parent->color = BLACK;
                     y->left->color = BLACK;
-                    right_rotate(x->parent);
+                    rightRotate(x->parent);
                     x = root;
                 }
             }
@@ -302,20 +300,20 @@ public:
         x->color = BLACK;
     }
     
-    int black_height(){
-        return black_height(root, root);
+    int blackHeight(){
+        return blackHeight(root, root);
     }
     
-    int black_height(Node *o, Node *n){
+    int blackHeight(Node *o, Node *n){
         if (n == NIL) return 1;
         else if (n->color == RED || o == n)
-            return max(black_height(o, n->left), black_height(o, n->right));
+            return max(blackHeight(o, n->left), blackHeight(o, n->right));
         else
-            return 1 + max(black_height(o, n->left), black_height(o, n->right));
+            return 1 + max(blackHeight(o, n->left), blackHeight(o, n->right));
     }
 
     string printColor(int n){
-        if (n == 1) return "red";
+        if (n == 0) return "red";
         else return "black";
     }
 
@@ -330,7 +328,7 @@ public:
 
     void check(Node *n){
         if (n == NIL) return;
-        cout << "(" << printKey(n->parent) << ", " << n->key << ", " << printColor(n->color) << ", " << black_height(n, n) << ", " << printKey(n->left) << ", " << printKey(n->right) << ")\n";
+        cout << "(" << printKey(n->parent) << ", " << n->key << ", " << printColor(n->color) << ", " << blackHeight(n, n) << ", " << printKey(n->left) << ", " << printKey(n->right) << ")\n";
         check(n->left);
         check(n->right);
     }
