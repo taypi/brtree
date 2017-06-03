@@ -1,0 +1,12 @@
+teste 0
+abuso 1
+carro 1
+doce 1
+gola 1
+gola 0
+palhaço 1
+taturana 1 
+pacote 1
+abusado 0
+bolha 1
+fussura 1

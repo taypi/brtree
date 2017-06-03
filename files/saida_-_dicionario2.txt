@@ -1,0 +1,31 @@
+[bruno@aldebaran RBT]$ ./RBTree ../dicionario2.txt 
+
+A palavra teste foi removida anteriormente ou nao foi inserida.
+ 
+Removendo a palavra gola
+abuso, carro, doce, 
+(Nil, carro, preto, 1, abuso, doce)
+
+(carro, abuso, preto, 0, Nil, Nil)
+
+(carro, doce, preto, 0, Nil, Nil)
+
+A palavra abusado foi removida anteriormente ou nao foi inserida.
+ 
+abuso, bolha, carro, doce, fussura, pacote, palhaço, taturana, 
+(Nil, carro, preto, 1, abuso, palhaço)
+
+(carro, abuso, preto, 0, Nil, bolha)
+
+(abuso, bolha, vermelho, 0, Nil, Nil)
+
+(carro, palhaço, vermelho, 1, fussura, taturana)
+
+(palhaço, fussura, preto, 0, doce, pacote)
+
+(fussura, doce, vermelho, 0, Nil, Nil)
+
+(fussura, pacote, vermelho, 0, Nil, Nil)
+
+(palhaço, taturana, preto, 0, Nil, Nil)
+
