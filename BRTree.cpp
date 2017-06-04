@@ -92,14 +92,12 @@ public:
         
         //connect x->right to b
         x->right = y->left;
-        if (x->right!=NIL){
-            x->right->parent = x;
-        }
+        if (y->left != NIL) y->left->parent = x;
         
         //connect y to parent's x
         y->parent = x->parent;
         if (x->parent == NIL) root = y;
-        else if (x->parent->left == x) x->parent->left = y;
+        else if (x == x->parent->left) x->parent->left = y;
         else x->parent->right = y;
         
         //connect y to x
@@ -107,40 +105,38 @@ public:
         x->parent = y;
     }
     
-    // copy from leftRotate but change x to y, left to right and vice versa
-    void rightRotate(Node *y){
-        x = y->left;
+    void rightRotate(Node *x){
+        y = x->left;
         
-        y->left = x->right;
-        if (y->left!=NIL) y->left->parent = y;
+        x->left = y->right;
+        if (y->right != NIL) y->right->parent = x;
         
-        x->parent = y->parent;
-        if (y->parent == NIL) root = x;
-        else if (y->parent->left == y) y->parent->left = x;
-        else y->parent->right = x;
+        y->parent = x->parent;
+        if (x->parent == NIL) root = y;
+        else if (x == x->parent->right) x->parent->right = y;
+        else x->parent->left = y;
         
-        x->right = y;
-        y->parent = x;
+        y->right = x;
+        x->parent = y;
     }
 
     void insert(string key){
-        z = new Node (key);
+        z = new Node(key);
         z->left = z->right = z->parent = NIL;
         
-        x = root;
         y = NIL;
+        x = root;
         
-        while (x!=NIL){
+        while (x != NIL){
             y = x;
             if (z->key < x->key) x = x->left;
             else x = x->right;
         }
-        
-        if (y==NIL) root = z;
+
+        z->parent = y;      
+        if (y == NIL) root = z;
         else if (z->key <  y->key) y->left = z;
         else y->right = z;
-        
-        z->parent = y;
         
         insertFixup(z);
 
@@ -150,40 +146,41 @@ public:
         cout << "*************************************************************\n";
     }
     
-    void insertFixup(Node *x){
-        while (x->parent->color == RED){
-            if (x->parent->parent->left == x->parent){
-                y = x->parent->parent->right;
+    void insertFixup(Node *z){
+        while (z->parent->color == RED){
+            if (z->parent == z->parent->parent->left){
+                y = z->parent->parent->right;
                 if (y->color == RED){
+                    z->parent->color = BLACK;
                     y->color = BLACK;
-                    x->parent->color = BLACK;
-                    x->parent->parent->color = RED;
-                    x = x->parent->parent;
-                }else{
-                    if (x->parent->right == x){
-                        x = x->parent;
-                        leftRotate(x);
+                    z->parent->parent->color = RED;
+                    z = z->parent->parent;
+                }
+                else{
+                    if (z == z->parent->right){
+                        z = z->parent;
+                        leftRotate(z);
                     }
-                    x->parent->color = BLACK;
-                    x->parent->parent->color = RED;
-                    rightRotate(x->parent->parent);
+                    z->parent->color = BLACK;
+                    z->parent->parent->color = RED;
+                    rightRotate(z->parent->parent);
                 }
             }
             else{
-                y = x->parent->parent->left;
+                y = z->parent->parent->left;
                 if (y->color == RED){
+                    z->parent->color = BLACK;
                     y->color = BLACK;
-                    x->parent->color = BLACK;
-                    x->parent->parent->color = RED;
-                    x = x->parent->parent;
+                    z->parent->parent->color = RED;
+                    z = z->parent->parent;
                 }else{
-                    if (x->parent->left == x){
-                        x = x->parent;
-                        rightRotate(x);
+                    if (z->parent->left == z){
+                        z = z->parent;
+                        rightRotate(z);
                     }
-                    x->parent->color = BLACK;
-                    x->parent->parent->color = RED;
-                    leftRotate(x->parent->parent);
+                    z->parent->color = BLACK;
+                    z->parent->parent->color = RED;
+                    leftRotate(z->parent->parent);
                 }
             }
         }
@@ -191,7 +188,7 @@ public:
     }
 
     Node* minimum(Node *x){
-        while (x->right != NIL) x = x->right;
+        while (x->left != NIL) x = x->left;
         return x;
     }
 
@@ -300,16 +297,12 @@ public:
         x->color = BLACK;
     }
     
-    int blackHeight(){
-        return blackHeight(root, root);
-    }
-    
-    int blackHeight(Node *o, Node *n){
+    int blackHeight(Node *m, Node *n){
         if (n == NIL) return 1;
-        else if (n->color == RED || o == n)
-            return max(blackHeight(o, n->left), blackHeight(o, n->right));
+        else if (n->color == RED || m == n)
+            return max(blackHeight(m, n->left), blackHeight(m, n->right));
         else
-            return 1 + max(blackHeight(o, n->left), blackHeight(o, n->right));
+            return 1 + max(blackHeight(m, n->left), blackHeight(m, n->right));
     }
 
     string printColor(int n){
