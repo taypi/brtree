@@ -306,7 +306,7 @@ public:
     }
 
     string printColor(int n){
-        if (n == 0) return "red";
+        if (n == RED) return "red";
         else return "black";
     }
 
