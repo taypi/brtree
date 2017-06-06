@@ -61,14 +61,6 @@ public:
         cout << n->key << " ";
         print(n->right);
     }
-    
-    void printWord(string word){
-        int start = (26 - word.length())/2;
-        for (int i = 0; i < 26; i++){
-            if (i < start || i >= start+word.length()) cout << " ";
-            else if (i == start) cout << word;
-        }
-    }
 
     Node* search(string key){
         x = root;
@@ -121,29 +113,28 @@ public:
     }
 
     void insert(string key){
-        z = new Node(key);
-        z->left = z->right = z->parent = NIL;
-        
-        y = NIL;
-        x = root;
-        
-        while (x != NIL){
-            y = x;
-            if (z->key < x->key) x = x->left;
-            else x = x->right;
+        z = search(key);
+        if (z == NIL) {
+            z = new Node(key);
+            z->left = z->right = z->parent = NIL;
+            
+            y = NIL;
+            x = root;
+            
+            while (x != NIL){
+                y = x;
+                if (z->key < x->key) x = x->left;
+                else x = x->right;
+            }
+
+            z->parent = y;      
+            if (y == NIL) root = z;
+            else if (z->key <  y->key) y->left = z;
+            else y->right = z;
+            
+            insertFixup(z);
         }
-
-        z->parent = y;      
-        if (y == NIL) root = z;
-        else if (z->key <  y->key) y->left = z;
-        else y->right = z;
-        
-        insertFixup(z);
-
-        cout << "*     Insert     *";
-        printWord(key);
-        cout << "*    Success    *\n";
-        cout << "*************************************************************\n";
+        else cout << "Palavra " << key << " já foi inserida anteriormente\n\n";
     }
     
     void insertFixup(Node *z){
@@ -200,12 +191,10 @@ public:
     }
 
     void delete_(string key){
-        cout << "*     Delete     *";
-        printWord(key);
         z = search(key);
         int y_original_color;
         if (z == NIL) {    
-            cout << "*      Fail     *\n";
+            cout << "A palavra " << key << " foi removida anteriormente ou nao foi inserida.\n\n";
         }
         else {
             y = z;
@@ -234,9 +223,10 @@ public:
                 y->color = z->color;
             }
             if (y_original_color == BLACK) deleteFixup(x);
-            cout << "*    Success    *\n";
+            cout << "Removendo a palavra " << key << endl;
+            print();
+            check();
         }
-        cout << "*************************************************************\n";
     }
 
     void deleteFixup(Node *x){
@@ -296,18 +286,19 @@ public:
         }
         x->color = BLACK;
     }
-    
-    int blackHeight(Node *m, Node *n){
-        if (n == NIL) return 1;
-        else if (n->color == RED || m == n)
-            return max(blackHeight(m, n->left), blackHeight(m, n->right));
-        else
-            return 1 + max(blackHeight(m, n->left), blackHeight(m, n->right));
+
+    int blackHeight(Node *n){
+        int blackHeight = 0;
+        while (n->left != NIL){
+            if (n->left->color == BLACK) blackHeight++;
+            n = n->left;
+        }
+        return blackHeight+1;
     }
 
     string printColor(int n){
-        if (n == RED) return "red";
-        else return "black";
+        if (n == RED) return "vermelho";
+        else return "preto";
     }
 
     string printKey(Node *n){
@@ -321,7 +312,7 @@ public:
 
     void check(Node *n){
         if (n == NIL) return;
-        cout << "(" << printKey(n->parent) << ", " << n->key << ", " << printColor(n->color) << ", " << blackHeight(n, n) << ", " << printKey(n->left) << ", " << printKey(n->right) << ")\n";
+        cout << "(" << printKey(n->parent) << ", " << n->key << ", " << printColor(n->color) << ", " << blackHeight(n) << ", " << printKey(n->left) << ", " << printKey(n->right) << ")\n\n";
         check(n->left);
         check(n->right);
     }
@@ -330,32 +321,24 @@ public:
 int readFile(int *, string *, char *argv[]);
 
 int main (int argc, char *argv[]){
-    string word[1000];
-    int size, number[1000];
+    string word[100000];
+    int size, number[100000];
 
     if (argc != 2) {
         cout<<"Usage: "<< argv[0] <<" <filename>\n";
         return 0;
     }
-    else size = readFile(number, word, argv);
+    size = readFile(number, word, argv);
 
     RedBlackTree rbt;
 
-    cout << "\n                    Black-Red Tree Build                    \n\n";
-    cout << "*************************************************************\n";
-    cout << "*    Function    *           Word           *     Status    *\n";
-    cout << "*************************************************************\n";
     for (int i = 0; i < size; i++){
         if (number[i] == 1) rbt.insert(word[i]);
-        else rbt.delete_(word[i]);
+        else if (number[i] == 0) rbt.delete_(word[i]);
     }
 
-    cout << "\n\n********************Black-Red Tree Print*********************\n\n";
     rbt.print();
-    cout << "\n*************************************************************\n\n";
-    cout << "\n********************Black-Red Tree Check*********************\n\n";
     rbt.check();
-    cout << "\n*************************************************************\n\n";
 
     return 0;
 }
@@ -363,7 +346,6 @@ int main (int argc, char *argv[]){
 int readFile(int *number, string *word, char *argv[]) {
     string line;
     int size = 0;
-    cout << argv[1] << endl;
     ifstream myfile(argv[1]);
     if (myfile.is_open()) {
         while (getline(myfile,line)){
