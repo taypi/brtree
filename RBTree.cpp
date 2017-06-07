@@ -28,7 +28,7 @@ public:
         
     } *root, *x, *y, *z, *NIL;
     
-    RedBlackTree (){
+    RedBlackTree(){
         NIL = new Node();
         root = NIL;
     }
@@ -79,20 +79,16 @@ public:
     }
     
     void leftRotate(Node *x){
-        //make y
         y = x->right;
         
-        //connect x->right to b
         x->right = y->left;
         if (y->left != NIL) y->left->parent = x;
         
-        //connect y to parent's x
         y->parent = x->parent;
         if (x->parent == NIL) root = y;
         else if (x == x->parent->left) x->parent->left = y;
         else x->parent->right = y;
         
-        //connect y to x
         y->left = x;
         x->parent = y;
     }
@@ -134,7 +130,7 @@ public:
             
             insertFixup(z);
         }
-        else cout << "Palavra " << key << " já foi inserida anteriormente\n\n";
+        else cout << "Palavra " << key << " ja foi inserida anteriormente\n\n";
     }
     
     void insertFixup(Node *z){
