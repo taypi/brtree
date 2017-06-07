@@ -1,3 +1,10 @@
+/* 
+dictionary implemented using red black tree
+usage: g++ RBTree.cpp -o RBTree && ./RBTree <filename>
+       the file must have a word followed by the number 1 (to insert) or 0 (to delete) per line
+author: Taynara Pinheiro
+*/ 
+
 #include <iostream>
 #include <string>
 #include <fstream>
